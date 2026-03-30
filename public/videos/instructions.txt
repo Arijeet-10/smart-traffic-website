@@ -1,0 +1,12 @@
+BENGALFLOW AI VIDEO ASSETS
+==========================
+
+Place your junction-specific YOLO detection videos (MP4 format) in this folder.
+The application dashboard will fetch these videos based on the paths defined in 'src/app/lib/cities-data.ts'.
+
+Expected File Names Examples:
+- kolkata_park_circus.mp4
+- howrah_station.mp4
+- darjeeling_chowrasta.mp4
+
+If a video is missing, the dashboard will display the native HTML5 video 'not found' state.
