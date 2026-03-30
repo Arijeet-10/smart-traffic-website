@@ -9,10 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Wind, Timer, MapPin, Activity, Loader2, Moon, Sun, Zap, LineChart, Cpu } from 'lucide-react';
+import { Users, Wind, Timer, MapPin, Activity, Loader2, Moon, Sun, Zap, LineChart, Cpu, LayoutDashboard, Settings } from 'lucide-react';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 
 const chartConfig = {
@@ -120,300 +120,339 @@ export function Dashboard() {
   const congestionColor = getCongestionColor(liveData.baseCount, liveData.maxCount);
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'dark bg-background' : 'bg-background'}`}>
+    <div className={`min-h-screen font-body transition-all duration-500 ${isDarkMode ? 'dark bg-slate-950' : 'bg-slate-50'}`}>
       <Toaster />
-      <header className="border-b bg-card sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Activity className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold text-foreground">BengalFlow <span className="text-primary">Dashboard</span></h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => setIsDarkMode(!isDarkMode)}>
-              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-            <div className="hidden sm:flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              Live Feed Active
+      
+      {/* Sidebar navigation simulation */}
+      <nav className="fixed left-0 top-0 h-full w-20 hidden lg:flex flex-col items-center py-8 border-r bg-card z-50">
+        <div className="mb-12 bg-primary p-2.5 rounded-2xl glow-primary">
+          <Zap className="h-6 w-6 text-primary-foreground" />
+        </div>
+        <div className="flex flex-col gap-8">
+          <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl bg-primary/10 text-primary">
+            <LayoutDashboard className="h-6 w-6" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl">
+            <Activity className="h-6 w-6" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl">
+            <MapPin className="h-6 w-6" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl">
+            <Settings className="h-6 w-6" />
+          </Button>
+        </div>
+        <div className="mt-auto">
+          <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl" onClick={() => setIsDarkMode(!isDarkMode)}>
+            {isDarkMode ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
+          </Button>
+        </div>
+      </nav>
+
+      <div className="lg:pl-20">
+        <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b px-8 py-4">
+          <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
+                BengalFlow <Badge variant="secondary" className="font-black px-3 py-0.5">COMMAND CENTER</Badge>
+              </h1>
+              <p className="text-sm text-muted-foreground font-medium">Real-time optimization engine active for {selectedCity}</p>
+            </div>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2 bg-green-500/10 text-green-500 px-4 py-1.5 rounded-full border border-green-500/20 text-xs font-black uppercase tracking-widest">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                System Healthy
+              </div>
+              <div className="text-sm font-bold text-muted-foreground hidden md:block">
+                {new Date().toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Controls and Video Section */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="md:col-span-1 space-y-6">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Location Settings</CardTitle>
-                <CardDescription>Select a district and junction</CardDescription>
+        <main className="container mx-auto px-8 py-8 space-y-8">
+          {/* Top Controls & Feed Grid */}
+          <div className="grid lg:grid-cols-12 gap-8">
+            {/* Selection Panel */}
+            <div className="lg:col-span-3 space-y-6">
+              <Card className="border-none shadow-2xl shadow-primary/5 overflow-hidden">
+                <CardHeader className="bg-primary/5 border-b pb-4">
+                  <CardTitle className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    Target Location
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6 space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">District</label>
+                    <Select value={selectedCity} onValueChange={handleCityChange}>
+                      <SelectTrigger className="h-12 rounded-xl border-2 focus:ring-primary shadow-sm font-bold">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        {cities.map(city => (
+                          <SelectItem key={city} value={city} className="font-bold">{city}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Intersection</label>
+                    <Select value={selectedJunction} onValueChange={setSelectedJunction}>
+                      <SelectTrigger className="h-12 rounded-xl border-2 focus:ring-primary shadow-sm font-bold">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        {junctions.map(j => (
+                          <SelectItem key={j} value={j} className="font-bold">{j}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button onClick={runAIOptimization} disabled={isAIUpdating} className="w-full h-12 rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+                    {isAIUpdating ? <Loader2 className="h-5 w-5 animate-spin" /> : <Zap className="h-5 w-5 mr-2" />}
+                    Sync Intelligence
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-primary border-none text-primary-foreground overflow-hidden glow-primary">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2 opacity-80">
+                    <Activity className="h-4 w-4" />
+                    Pulse Stats
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between items-center py-2 border-b border-white/10">
+                    <span className="text-xs font-medium opacity-70 italic">Current Traffic Load:</span>
+                    <Badge variant="secondary" className="font-black bg-white/20 hover:bg-white/30 text-white border-none">{liveData.road}</Badge>
+                  </div>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-xs font-medium opacity-70 italic">Active Hub Nodes:</span>
+                    <span className="text-xl font-black">{liveData.nodes}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Live Feed Card */}
+            <Card className="lg:col-span-9 border-none shadow-2xl shadow-black/5 overflow-hidden relative group rounded-3xl">
+               <div className="absolute top-6 left-6 z-10 flex items-center gap-3 bg-black/40 backdrop-blur-xl px-4 py-2 rounded-full border border-white/20 shadow-2xl">
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+                <span className="text-[10px] font-black text-white uppercase tracking-[0.2em]">YOLO LIVE FEED</span>
+              </div>
+              <div className="absolute top-6 right-6 z-10 bg-black/40 backdrop-blur-xl px-4 py-2 rounded-full border border-white/20 shadow-2xl">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest">{selectedJunction} CAMERA ID-722</span>
+              </div>
+              <CardContent className="p-0 h-[450px] bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                <video 
+                  key={liveData.videoUrl}
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline
+                  className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-[2000ms] opacity-60 group-hover:opacity-100"
+                >
+                  <source src={liveData.videoUrl} type="video/mp4" />
+                </video>
+                <div className="absolute inset-0 pointer-events-none border-[1.5rem] border-transparent shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]" />
+                {/* Simulated Overlay Graphics */}
+                <div className="absolute inset-0 p-8 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <div className="bg-black/60 backdrop-blur-lg p-6 rounded-3xl border border-white/10 max-w-md">
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="space-y-1">
+                        <div className="text-[8px] font-black text-white/50 uppercase">Cars</div>
+                        <div className="text-lg font-black text-primary">{(liveData.baseCount * 0.7).toFixed(0)}</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-[8px] font-black text-white/50 uppercase">Buses</div>
+                        <div className="text-lg font-black text-accent">{(liveData.baseCount * 0.2).toFixed(0)}</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-[8px] font-black text-white/50 uppercase">Other</div>
+                        <div className="text-lg font-black text-white">{(liveData.baseCount * 0.1).toFixed(0)}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Metrics Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { title: 'Vehicle Density', icon: <Users className="h-5 w-5" />, value: liveData.baseCount, sub: `Max: ${liveData.maxCount}`, color: congestionColor, progress: (liveData.baseCount/liveData.maxCount)*100 },
+              { title: 'Air Quality Index', icon: <Wind className="h-5 w-5" />, value: liveData.baseAqi, sub: aqiInfo.label, color: aqiInfo.color, progress: (liveData.baseAqi/300)*100 },
+              { title: 'Current Phase', icon: <Timer className="h-5 w-5" />, value: `${liveData.baseTimer}s`, sub: 'AI Optimized Cycle', color: 'text-foreground', progress: (liveData.baseTimer/liveData.maxTimer)*100 },
+              { title: 'Flow Velocity', icon: <Cpu className="h-5 w-5" />, value: simulationHistory.length > 0 ? `${simulationHistory[simulationHistory.length-1].speed} km/h` : '--', sub: 'SUMO Calculated', color: 'text-primary', progress: 65 },
+            ].map((metric, i) => (
+              <Card key={i} className="border-none shadow-xl shadow-black/5 hover:scale-[1.02] transition-transform duration-300 rounded-3xl overflow-hidden">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{metric.title}</CardTitle>
+                  <div className="p-2 bg-muted rounded-xl">{metric.icon}</div>
+                </CardHeader>
+                <CardContent>
+                  <div className={`text-4xl font-black tracking-tighter ${metric.color} mb-1`}>{metric.value}</div>
+                  <p className="text-xs font-bold text-muted-foreground mb-4 uppercase tracking-wider">{metric.sub}</p>
+                  <Progress value={metric.progress} className="h-2 rounded-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Performance & Logic Section */}
+          <div className="grid lg:grid-cols-12 gap-8">
+            <Card className="lg:col-span-8 border-none shadow-2xl shadow-black/5 rounded-3xl overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between bg-muted/30 pb-6">
+                <div>
+                  <CardTitle className="text-lg font-black flex items-center gap-2">
+                    <LineChart className="h-5 w-5 text-primary" />
+                    SUMO Engine Analytics
+                  </CardTitle>
+                  <CardDescription className="font-medium">Continuous network performance monitoring</CardDescription>
+                </div>
+                <Badge variant="outline" className="font-mono bg-background px-4 py-1 rounded-full border-2 font-black text-[10px]">
+                  SIM_NODE_{selectedJunction.slice(0, 3).toUpperCase()}_PRIME
+                </Badge>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold uppercase text-muted-foreground mb-2 block">District</label>
-                  <Select value={selectedCity} onValueChange={handleCityChange}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select City" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cities.map(city => (
-                        <SelectItem key={city} value={city}>{city}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <CardContent className="pt-8">
+                <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                  <AreaChart data={simulationHistory}>
+                    <defs>
+                      <linearGradient id="colorSpeed" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorThroughput" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid vertical={false} strokeDasharray="5 5" className="stroke-muted" />
+                    <XAxis dataKey="timestamp" hide />
+                    <YAxis hide />
+                    <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                    <Area
+                      type="step"
+                      dataKey="speed"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={4}
+                      fillOpacity={1}
+                      fill="url(#colorSpeed)"
+                      isAnimationActive={false}
+                    />
+                    <Area
+                      type="step"
+                      dataKey="throughput"
+                      stroke="hsl(var(--accent))"
+                      strokeWidth={4}
+                      fillOpacity={1}
+                      fill="url(#colorThroughput)"
+                      isAnimationActive={false}
+                    />
+                  </AreaChart>
+                </ChartContainer>
+                <div className="flex justify-center gap-12 mt-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-primary" />
+                    <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Velocity</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-accent" />
+                    <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Throughput</span>
+                  </div>
                 </div>
-                <div>
-                  <label className="text-xs font-bold uppercase text-muted-foreground mb-2 block">Junction</label>
-                  <Select value={selectedJunction} onValueChange={setSelectedJunction}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select Junction" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {junctions.map(j => (
-                        <SelectItem key={j} value={j}>{j}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button onClick={runAIOptimization} disabled={isAIUpdating} className="w-full">
-                  {isAIUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Zap className="h-4 w-4 mr-2" />}
-                  Sync AI
-                </Button>
               </CardContent>
             </Card>
 
-            <Card className="bg-primary text-primary-foreground">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Activity className="h-5 w-5" />
-                  Live Status
+            <Card className="lg:col-span-4 border-none shadow-2xl shadow-primary/5 rounded-3xl overflow-hidden flex flex-col">
+              <CardHeader className="bg-primary pb-6 text-primary-foreground">
+                <CardTitle className="text-lg font-black flex items-center gap-2">
+                  <Zap className="h-5 w-5" />
+                  AI Intelligence Log
                 </CardTitle>
+                <CardDescription className="text-primary-foreground/70 font-medium">Real-time reasoning stream</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm opacity-80">Active Nodes:</span>
-                    <Badge variant="secondary" className="font-bold">{liveData.nodes}</Badge>
+              <CardContent className="flex-1 p-8">
+                <div className="relative h-full flex flex-col">
+                   <div className="p-6 bg-muted border rounded-[2rem] flex-1 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
+                      <LayoutDashboard className="h-20 w-20" />
+                    </div>
+                    {aiRationale ? (
+                      <p className="text-sm font-bold leading-relaxed text-foreground animate-in fade-in duration-1000">
+                        {aiRationale}
+                      </p>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-4">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        <span className="text-[10px] uppercase font-black tracking-[0.3em] animate-pulse">Analyzing Pattern Data...</span>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm opacity-80">Condition:</span>
-                    <Badge className="bg-white/20 hover:bg-white/30 text-white border-none">{liveData.road}</Badge>
+                  <div className="mt-8 grid grid-cols-3 gap-2">
+                     <div className={`aspect-square rounded-full shadow-lg ${liveData.baseTimer > 60 ? 'bg-red-500 shadow-red-500/50' : 'bg-red-950/30'}`} />
+                     <div className={`aspect-square rounded-full shadow-lg ${liveData.baseTimer > 30 && liveData.baseTimer <= 60 ? 'bg-yellow-500 shadow-yellow-500/50' : 'bg-yellow-950/30'}`} />
+                     <div className={`aspect-square rounded-full shadow-lg ${liveData.baseTimer <= 30 ? 'bg-green-500 shadow-green-500/50' : 'bg-green-950/30'}`} />
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          <Card className="md:col-span-2 overflow-hidden relative group">
-            <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
-              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-[10px] font-bold text-white uppercase tracking-wider">Live YOLO Detection</span>
-            </div>
-            <div className="absolute top-4 right-4 z-10 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
-              <span className="text-[10px] font-bold text-white uppercase tracking-wider">{selectedJunction} Feed</span>
-            </div>
-            <CardContent className="p-0 h-full min-h-[300px] bg-black flex items-center justify-center">
-              <video 
-                key={liveData.videoUrl}
-                autoPlay 
-                loop 
-                muted 
-                playsInline
-                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-              >
-                <source src={liveData.videoUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Analytics Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Vehicle Density</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+          {/* District Grid Overview */}
+          <Card className="border-none shadow-2xl shadow-black/5 rounded-3xl overflow-hidden">
+            <CardHeader className="bg-muted/30 pb-6">
+              <CardTitle className="text-lg font-black uppercase tracking-tight">Regional Hub Health</CardTitle>
+              <CardDescription className="font-medium">Active junctions in the {selectedCity} area</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className={`text-3xl font-bold ${congestionColor}`}>{liveData.baseCount}</div>
-              <p className="text-xs text-muted-foreground mt-1">Max Capacity: {liveData.maxCount}</p>
-              <Progress value={(liveData.baseCount / liveData.maxCount) * 100} className="h-2 mt-4" />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Air Quality Index</CardTitle>
-              <Wind className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className={`text-3xl font-bold ${aqiInfo.color}`}>{liveData.baseAqi}</div>
-              <p className="text-xs font-semibold mt-1">Status: {aqiInfo.label}</p>
-              <div className="mt-4 flex gap-1 h-2 overflow-hidden rounded-full bg-muted">
-                <div className="h-full bg-green-500" style={{ width: '15%' }} />
-                <div className="h-full bg-yellow-500" style={{ width: '15%' }} />
-                <div className="h-full bg-orange-500" style={{ width: '20%' }} />
-                <div className="h-full bg-red-500" style={{ width: '20%' }} />
-                <div className="h-full bg-purple-500" style={{ width: '30%' }} />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Signal Timer</CardTitle>
-              <Timer className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                {liveData.baseTimer}<span className="text-sm ml-1 text-muted-foreground">seconds</span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">Optimized by AI engine</p>
-              <div className="mt-4 flex items-center justify-center py-2 bg-muted/50 rounded-lg">
-                <div className="flex gap-2">
-                  <div className={`w-4 h-4 rounded-full ${liveData.baseTimer > 60 ? 'bg-red-500 animate-pulse' : 'bg-red-900'}`} />
-                  <div className={`w-4 h-4 rounded-full ${liveData.baseTimer > 30 && liveData.baseTimer <= 60 ? 'bg-yellow-500 animate-pulse' : 'bg-yellow-900'}`} />
-                  <div className={`w-4 h-4 rounded-full ${liveData.baseTimer <= 30 ? 'bg-green-500 animate-pulse' : 'bg-green-900'}`} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Network Latency</CardTitle>
-              <Cpu className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{simulationHistory.length > 0 ? simulationHistory[simulationHistory.length-1].speed : '--'}<span className="text-sm ml-1 text-muted-foreground">km/h</span></div>
-              <p className="text-xs text-muted-foreground mt-1">SUMO Flow Simulation</p>
-              <div className="flex items-center gap-2 mt-4">
-                <Activity className="h-3 w-3 text-primary animate-bounce" />
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Engine Processing...</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* SUMO Simulation & AI Insight Section */}
-        <div className="grid lg:grid-cols-3 gap-8 mb-8">
-          <Card className="lg:col-span-2">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <LineChart className="h-5 w-5 text-primary" />
-                  SUMO Network Performance
-                </CardTitle>
-                <CardDescription>Real-time vehicle throughput and average velocity</CardDescription>
-              </div>
-              <Badge variant="outline" className="font-mono">SIM_ID: {selectedJunction.slice(0, 3).toUpperCase()}_001</Badge>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className="h-[250px] w-full">
-                <AreaChart data={simulationHistory}>
-                  <defs>
-                    <linearGradient id="colorSpeed" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-speed)" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="var(--color-speed)" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorThroughput" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-throughput)" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="var(--color-throughput)" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tickLine={false} 
-                    axisLine={false} 
-                    tick={{fontSize: 10}} 
-                    minTickGap={20}
-                  />
-                  <YAxis hide />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Area
-                    type="monotone"
-                    dataKey="speed"
-                    stroke="var(--color-speed)"
-                    fillOpacity={1}
-                    fill="url(#colorSpeed)"
-                    isAnimationActive={false}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="throughput"
-                    stroke="var(--color-throughput)"
-                    fillOpacity={1}
-                    fill="url(#colorThroughput)"
-                    isAnimationActive={false}
-                  />
-                </AreaChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Zap className="h-5 w-5 text-primary" />
-                AI Rationale
-              </CardTitle>
-              <CardDescription>Optimization Intelligence</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="p-4 bg-muted/30 border rounded-xl min-h-[180px]">
-                {aiRationale ? (
-                  <p className="text-sm leading-relaxed text-foreground">{aiRationale}</p>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-2 pt-10">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                    <span className="text-xs uppercase font-bold tracking-widest text-center">Awaiting System Sync...</span>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid lg:grid-cols-1 gap-8">
-           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">District Overview</CardTitle>
-              <CardDescription>Junction health in {selectedCity}</CardDescription>
-            </CardHeader>
-            <CardContent className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <CardContent className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pt-8">
               {junctions.map(j => {
                 const data = citiesData[selectedCity][j];
                 const info = getAQIStatus(data.baseAqi);
+                const isActive = j === selectedJunction;
                 return (
-                  <div key={j} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors" onClick={() => setSelectedJunction(j)}>
+                  <div 
+                    key={j} 
+                    className={`group relative flex items-center justify-between p-5 border-2 rounded-[2rem] transition-all duration-300 cursor-pointer ${isActive ? 'bg-primary border-primary shadow-xl shadow-primary/20 scale-105' : 'hover:border-primary/30 hover:bg-card'}`}
+                    onClick={() => setSelectedJunction(j)}
+                  >
                     <div className="flex flex-col">
-                      <span className={`text-sm font-bold ${j === selectedJunction ? 'text-primary' : ''}`}>{j}</span>
-                      <span className="text-[10px] text-muted-foreground uppercase">{data.road}</span>
+                      <span className={`text-sm font-black tracking-tight ${isActive ? 'text-primary-foreground' : ''}`}>{j}</span>
+                      <span className={`text-[9px] font-black uppercase tracking-widest ${isActive ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>{data.road}</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className={`w-2 h-2 rounded-full ${info.bg.replace('bg-', 'bg-')}`} />
-                      <span className="text-xs font-medium">{data.baseCount} veh</span>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-3 h-3 rounded-full border-2 border-white/20 ${info.hex.includes('22c55e') ? 'bg-green-500' : 'bg-red-500'}`} />
+                      <span className={`text-xs font-black ${isActive ? 'text-primary-foreground' : 'text-foreground'}`}>{data.baseCount}v</span>
                     </div>
                   </div>
                 );
               })}
             </CardContent>
           </Card>
-        </div>
-      </main>
+        </main>
 
-      <footer className="border-t py-6 mt-auto">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4" />
-            BengalFlow AI Operational: {selectedCity} Region
+        <footer className="border-t py-12 px-8 bg-card">
+          <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">
+            <div className="flex items-center gap-4">
+              <div className="bg-primary/10 p-2 rounded-xl">
+                <Zap className="h-4 w-4 text-primary" />
+              </div>
+              BENGALFLOW AI OPERATIONAL SYSTEM
+            </div>
+            <div>STATUS: SYNCHRONIZED • PULSE: {new Date().toLocaleTimeString()}</div>
+            <div className="flex gap-8">
+              <Link href="/" className="hover:text-primary transition-colors">BACK TO TERMINAL</Link>
+              <Link href="#" className="hover:text-primary transition-colors">SUPPORT</Link>
+            </div>
           </div>
-          <div>Last System Pulse: {new Date().toLocaleTimeString()}</div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }
