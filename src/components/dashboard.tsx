@@ -213,7 +213,7 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
           </div>
 
           {/* Live Feed Card */}
-          <Card className="lg:col-span-9 border-none shadow-2xl shadow-black/5 overflow-hidden relative group rounded-3xl">
+          <Card className="lg:col-span-9 border-none shadow-2xl shadow-black/5 overflow-hidden relative rounded-3xl">
              <div className="absolute top-6 left-6 z-10 flex items-center gap-3 bg-black/40 backdrop-blur-xl px-4 py-2 rounded-full border border-white/20 shadow-2xl">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
@@ -231,7 +231,7 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
                 loop 
                 muted 
                 playsInline
-                className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-[2000ms] opacity-60 group-hover:opacity-100"
+                className="w-full h-full object-cover"
               >
                 <source src={liveData.videoUrl} type="video/mp4" />
               </video>
