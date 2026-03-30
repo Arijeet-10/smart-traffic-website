@@ -21,7 +21,7 @@ export type StateData = Record<string, CityJunctions>;
  */
 export const citiesData: StateData = {
   "Kolkata": {
-    "Park Circus 7-Point": { baseCount: 160, maxCount: 220, baseTimer: 75, maxTimer: 120, baseAqi: 150, road: "Congested", nodes: 8, videoUrl: "/videos/kolkata_park_circus.mp4" },
+    "Park Circus 7-Point": { baseCount: 160, maxCount: 220, baseTimer: 75, maxTimer: 120, baseAqi: 150, road: "Congested", nodes: 8, videoUrl: "/videos/video.mp4" },
     "Shyam Bazar Five Point": { baseCount: 140, maxCount: 200, baseTimer: 60, maxTimer: 110, baseAqi: 140, road: "Busy", nodes: 5, videoUrl: "/videos/kolkata_shyam_bazar.mp4" },
     "Ultadanga Crossing": { baseCount: 180, maxCount: 250, baseTimer: 80, maxTimer: 130, baseAqi: 160, road: "Busy", nodes: 6, videoUrl: "/videos/kolkata_ultadanga.mp4" },
     "Gariahat Crossing": { baseCount: 150, maxCount: 210, baseTimer: 70, maxTimer: 115, baseAqi: 135, road: "Market Traffic", nodes: 4, videoUrl: "/videos/kolkata_gariahat.mp4" },
