@@ -31,7 +31,7 @@ export const citiesData: StateData = {
   "Howrah": {
     "Station More": { baseCount: 210, maxCount: 300, baseTimer: 85, maxTimer: 140, baseAqi: 170, road: "Congested", nodes: 7, videoUrl: "/videos/howrah_station.mp4" },
     "Kadamtala Crossing": { baseCount: 120, maxCount: 180, baseTimer: 50, maxTimer: 95, baseAqi: 110, road: "Busy", nodes: 4, videoUrl: "/videos/howrah_kadamtala.mp4" },
-    "Nabanna Intersection": { baseCount: 90, maxCount: 150, baseTimer: 45, base85: 85, baseAqi: 90, road: "Clear", nodes: 5, videoUrl: "/videos/howrah_nabanna.mp4" },
+    "Nabanna Intersection": { baseCount: 90, maxCount: 150, baseTimer: 45, maxTimer: 85, baseAqi: 90, road: "Clear", nodes: 5, videoUrl: "/videos/howrah_nabanna.mp4" },
     "Avani Mall Junction": { baseCount: 140, maxCount: 200, baseTimer: 60, maxTimer: 110, baseAqi: 130, road: "Busy", nodes: 4, videoUrl: "/videos/howrah_avani.mp4" },
   },
   "Siliguri": {
@@ -68,7 +68,7 @@ export const citiesData: StateData = {
     "Curzon Gate Crossing": { baseCount: 140, maxCount: 210, baseTimer: 65, maxTimer: 115, baseAqi: 130, road: "Busy", nodes: 5, videoUrl: "/videos/bardhaman_curzon_gate.mp4" },
     "Station More": { baseCount: 160, maxCount: 230, baseTimer: 75, maxTimer: 125, baseAqi: 145, road: "Congested", nodes: 4, videoUrl: "/videos/bardhaman_station.mp4" },
     "Golapbag More": { baseCount: 110, maxCount: 170, baseTimer: 50, maxTimer: 95, baseAqi: 115, road: "Clear", nodes: 4, videoUrl: "/videos/bardhaman_golapbag.mp4" },
-    "Town Hall Junction": { baseCount: 120, baseTimer: 55, maxCount: 180, maxTimer: 105, baseAqi: 125, road: "Busy", nodes: 4, videoUrl: "/videos/bardhaman_town_hall.mp4" },
+    "Town Hall Junction": { baseCount: 120, maxCount: 180, baseTimer: 55, maxTimer: 105, baseAqi: 125, road: "Busy", nodes: 4, videoUrl: "/videos/bardhaman_town_hall.mp4" },
   },
   "Malda": {
     "Rathbari More": { baseCount: 150, maxCount: 220, baseTimer: 70, maxTimer: 120, baseAqi: 120, road: "Congested", nodes: 5, videoUrl: "/videos/malda_rathbari.mp4" },
