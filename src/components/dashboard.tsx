@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Wind, Timer, MapPin, Route, Activity, Loader2, Moon, Sun, AlertTriangle, Zap } from 'lucide-react';
+import { Users, Wind, Timer, MapPin, Route, Activity, Loader2, Moon, Sun, AlertTriangle, Zap, Video } from 'lucide-react';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 
@@ -43,7 +43,6 @@ export function Dashboard() {
     const interval = setInterval(() => {
       setLiveData(prev => {
         if (!prev) return null;
-        const base = citiesData[selectedCity][selectedJunction];
         return {
           ...prev,
           baseCount: fluctuateValue(prev.baseCount, 12, 10),
@@ -118,64 +117,92 @@ export function Dashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* Controls Section */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card className="col-span-full md:col-span-2 lg:col-span-2">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Location Settings</CardTitle>
-              <CardDescription>Select a district and junction to view real-time data</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-wrap gap-4">
-              <div className="flex-1 min-w-[200px]">
-                <label className="text-xs font-bold uppercase text-muted-foreground mb-2 block">District</label>
-                <Select value={selectedCity} onValueChange={handleCityChange}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select City" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cities.map(city => (
-                      <SelectItem key={city} value={city}>{city}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex-1 min-w-[200px]">
-                <label className="text-xs font-bold uppercase text-muted-foreground mb-2 block">Junction</label>
-                <Select value={selectedJunction} onValueChange={setSelectedJunction}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Junction" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {junctions.map(j => (
-                      <SelectItem key={j} value={j}>{j}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button onClick={runAIOptimization} disabled={isAIUpdating} className="self-end h-10">
-                {isAIUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Zap className="h-4 w-4 mr-2" />}
-                Sync AI
-              </Button>
-            </CardContent>
-          </Card>
+        {/* Controls and Video Section */}
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <div className="md:col-span-1 space-y-6">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Location Settings</CardTitle>
+                <CardDescription>Select a district and junction</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold uppercase text-muted-foreground mb-2 block">District</label>
+                  <Select value={selectedCity} onValueChange={handleCityChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select City" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cities.map(city => (
+                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase text-muted-foreground mb-2 block">Junction</label>
+                  <Select value={selectedJunction} onValueChange={setSelectedJunction}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Junction" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {junctions.map(j => (
+                        <SelectItem key={j} value={j}>{j}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button onClick={runAIOptimization} disabled={isAIUpdating} className="w-full">
+                  {isAIUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Zap className="h-4 w-4 mr-2" />}
+                  Sync AI
+                </Button>
+              </CardContent>
+            </Card>
 
-          <Card className="bg-primary text-primary-foreground">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Activity className="h-5 w-5" />
-                Live Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm opacity-80">Active Nodes:</span>
-                  <Badge variant="secondary" className="font-bold">{liveData.nodes}</Badge>
+            <Card className="bg-primary text-primary-foreground">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Activity className="h-5 w-5" />
+                  Live Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm opacity-80">Active Nodes:</span>
+                    <Badge variant="secondary" className="font-bold">{liveData.nodes}</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm opacity-80">Condition:</span>
+                    <Badge className="bg-white/20 hover:bg-white/30 text-white border-none">{liveData.road}</Badge>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm opacity-80">Condition:</span>
-                  <Badge className="bg-white/20 hover:bg-white/30 text-white border-none">{liveData.road}</Badge>
-                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="md:col-span-2 overflow-hidden relative group">
+            <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+              <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span className="text-[10px] font-bold text-white uppercase tracking-wider">Live YOLO Detection</span>
+            </div>
+            <div className="absolute top-4 right-4 z-10 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+              <span className="text-[10px] font-bold text-white uppercase tracking-wider">{selectedJunction} Feed</span>
+            </div>
+            <CardContent className="p-0 h-full min-h-[300px] bg-black flex items-center justify-center">
+              <video 
+                key={liveData.videoUrl}
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+              >
+                <source src={liveData.videoUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              <div className="absolute inset-0 pointer-events-none border-[12px] border-black/5 flex items-center justify-center">
+                <div className="w-full h-full border border-primary/20 rounded-sm" />
               </div>
             </CardContent>
           </Card>
