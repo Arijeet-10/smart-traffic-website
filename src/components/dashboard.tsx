@@ -37,8 +37,6 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
   const [selectedJunction, setSelectedJunction] = useState("Park Circus 7-Point");
   const [liveData, setLiveData] = useState<JunctionData | null>(null);
   const [isAIUpdating, setIsAIUpdating] = useState(false);
-  const [aiRationale, setAiRationale] = useState("");
-  const [aiError, setAiError] = useState(false);
   const [simulationHistory, setSimulationHistory] = useState<any[]>([]);
   const { toast } = useToast();
 
@@ -51,8 +49,6 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
     const firstJunction = Object.keys(citiesData[city])[0];
     setSelectedJunction(firstJunction);
     setSimulationHistory([]);
-    setAiRationale("");
-    setAiError(false);
   };
 
   // Initial and reset state
@@ -60,8 +56,6 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
     const data = citiesData[selectedCity][selectedJunction];
     setLiveData({ ...data });
     setSimulationHistory([]);
-    setAiRationale("");
-    setAiError(false);
   }, [selectedCity, selectedJunction]);
 
   // Simulation Logic & SUMO History Update
@@ -93,7 +87,6 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
   const runAIOptimization = useCallback(async () => {
     if (!liveData) return;
     setIsAIUpdating(true);
-    setAiError(false);
     try {
       const junctionConfig = citiesData[selectedCity][selectedJunction];
       
@@ -107,12 +100,10 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
       });
 
       setLiveData(prev => prev ? ({ ...prev, baseTimer: result.recommendedTimer }) : null);
-      setAiRationale(result.rationale);
     } catch (error: any) {
-      setAiError(true);
       toast({
         title: "AI Optimization Error",
-        description: "Failed to connect to the traffic optimization engine. Please ensure your configuration is correct.",
+        description: "Failed to connect to the traffic optimization engine. Retrying automatically.",
         variant: "destructive",
       });
     } finally {
@@ -273,7 +264,7 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
 
         {/* Performance & Logic Section */}
         <div className="grid lg:grid-cols-12 gap-8">
-          <Card className="lg:col-span-8 border-none shadow-2xl shadow-black/5 rounded-3xl overflow-hidden bg-card">
+          <Card className="lg:col-span-12 border-none shadow-2xl shadow-black/5 rounded-3xl overflow-hidden bg-card">
             <CardHeader className="flex flex-row items-center justify-between bg-muted/30 pb-6">
               <div>
                 <CardTitle className="text-lg font-black flex items-center gap-2">
@@ -287,7 +278,7 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
               </Badge>
             </CardHeader>
             <CardContent className="pt-8">
-              <ChartContainer config={chartConfig} className="h-[300px] w-full">
+              <ChartContainer config={chartConfig} className="h-[350px] w-full">
                 <AreaChart data={simulationHistory}>
                   <defs>
                     <linearGradient id="colorSpeed" x1="0" y1="0" x2="0" y2="1">
@@ -331,46 +322,6 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-accent" />
                   <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Volume</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="lg:col-span-4 border-none shadow-2xl shadow-primary/5 rounded-3xl overflow-hidden flex flex-col bg-card">
-            <CardHeader className="bg-primary pb-6 text-primary-foreground">
-              <CardTitle className="text-lg font-black flex items-center gap-2">
-                <Zap className="h-5 w-5" />
-                AI Logic Stream
-              </CardTitle>
-              <CardDescription className="text-primary-foreground/70 font-medium">Optimization rationale</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1 p-8">
-              <div className="relative h-full flex flex-col">
-                 <div className="p-6 bg-muted/50 border rounded-[2rem] flex-1 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity text-primary">
-                    <Activity className="h-20 w-20" />
-                  </div>
-                  {aiRationale ? (
-                    <p className="text-sm font-bold leading-relaxed text-foreground animate-in fade-in duration-1000">
-                      {aiRationale}
-                    </p>
-                  ) : aiError ? (
-                    <div className="flex flex-col items-center justify-center h-full text-destructive gap-4 text-center">
-                      <AlertCircle className="h-8 w-8" />
-                      <span className="text-[10px] uppercase font-black tracking-[0.2em]">Optimization Offline</span>
-                      <p className="text-xs font-medium text-muted-foreground">Unable to fetch AI logic. Retrying...</p>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-4">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                      <span className="text-[10px] uppercase font-black tracking-[0.3em] animate-pulse">Deep Learning Analysis...</span>
-                    </div>
-                  )}
-                </div>
-                <div className="mt-8 grid grid-cols-3 gap-2 px-4">
-                   <div className={`aspect-square rounded-full shadow-lg transition-all duration-500 ${liveData.baseTimer > 60 ? 'bg-red-500 shadow-red-500/50 scale-110' : 'bg-red-950/30'}`} />
-                   <div className={`aspect-square rounded-full shadow-lg transition-all duration-500 ${liveData.baseTimer > 30 && liveData.baseTimer <= 60 ? 'bg-yellow-500 shadow-yellow-500/50 scale-110' : 'bg-yellow-950/30'}`} />
-                   <div className={`aspect-square rounded-full shadow-lg transition-all duration-500 ${liveData.baseTimer <= 30 ? 'bg-green-500 shadow-green-500/50 scale-110' : 'bg-green-950/30'}`} />
                 </div>
               </div>
             </CardContent>
