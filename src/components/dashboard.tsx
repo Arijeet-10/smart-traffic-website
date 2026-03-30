@@ -2,16 +2,29 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { citiesData, JunctionData, RoadCondition } from '@/app/lib/cities-data';
-import { getAQIStatus, fluctuateValue, getCongestionColor } from '@/app/lib/simulation';
+import { getAQIStatus, fluctuateValue, getCongestionColor, calculateSumoMetrics } from '@/app/lib/simulation';
 import { suggestTrafficSignalOptimization } from '@/ai/flows/suggest-traffic-signal-optimization-flow';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Wind, Timer, MapPin, Route, Activity, Loader2, Moon, Sun, AlertTriangle, Zap, Video } from 'lucide-react';
+import { Users, Wind, Timer, MapPin, Route, Activity, Loader2, Moon, Sun, AlertTriangle, Zap, LineChart, Cpu } from 'lucide-react';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
+
+const chartConfig = {
+  speed: {
+    label: "Avg Speed (km/h)",
+    color: "hsl(var(--primary))",
+  },
+  throughput: {
+    label: "Throughput (vpm)",
+    color: "hsl(var(--accent))",
+  },
+} satisfies ChartConfig;
 
 export function Dashboard() {
   const [selectedCity, setSelectedCity] = useState("Kolkata");
@@ -20,6 +33,7 @@ export function Dashboard() {
   const [isAIUpdating, setIsAIUpdating] = useState(false);
   const [aiRationale, setAiRationale] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [simulationHistory, setSimulationHistory] = useState<any[]>([]);
   const { toast } = useToast();
 
   const cities = useMemo(() => Object.keys(citiesData), []);
@@ -30,26 +44,37 @@ export function Dashboard() {
     setSelectedCity(city);
     const firstJunction = Object.keys(citiesData[city])[0];
     setSelectedJunction(firstJunction);
+    setSimulationHistory([]);
   };
 
   // Initial and reset state
   useEffect(() => {
     const data = citiesData[selectedCity][selectedJunction];
     setLiveData({ ...data });
+    setSimulationHistory([]);
   }, [selectedCity, selectedJunction]);
 
-  // Simulation Logic
+  // Simulation Logic & SUMO History Update
   useEffect(() => {
     const interval = setInterval(() => {
       setLiveData(prev => {
         if (!prev) return null;
-        return {
+        const newData = {
           ...prev,
           baseCount: fluctuateValue(prev.baseCount, 12, 10),
           baseAqi: fluctuateValue(prev.baseAqi, 8, 20),
         };
+        
+        // Update simulation history
+        const metrics = calculateSumoMetrics(newData.baseCount, newData.baseTimer, newData.maxCount);
+        setSimulationHistory(h => {
+          const next = [...h, metrics];
+          return next.slice(-15); // Keep last 15 data points
+        });
+
+        return newData;
       });
-    }, 6000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [selectedCity, selectedJunction]);
@@ -82,7 +107,7 @@ export function Dashboard() {
     }
   }, [liveData, selectedCity, selectedJunction, toast]);
 
-  // Run AI optimization whenever traffic significant changes occur or periodic
+  // Periodic AI Sync
   useEffect(() => {
     const aiInterval = setInterval(() => {
       runAIOptimization();
@@ -164,7 +189,7 @@ export function Dashboard() {
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Activity className="h-5 w-5" />
                   Live Status
-                </CardTitle>
+                </Activity>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -201,48 +226,32 @@ export function Dashboard() {
                 <source src={liveData.videoUrl} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
-              <div className="absolute inset-0 pointer-events-none border-[12px] border-black/5 flex items-center justify-center">
-                <div className="w-full h-full border border-primary/20 rounded-sm" />
-              </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Analytics Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Vehicle Count */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Vehicle Density</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className={`text-3xl font-bold ${congestionColor}`}>
-                {liveData.baseCount}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Max Capacity: {liveData.maxCount}
-              </p>
-              <Progress 
-                value={(liveData.baseCount / liveData.maxCount) * 100} 
-                className="h-2 mt-4" 
-              />
+              <div className={`text-3xl font-bold ${congestionColor}`}>{liveData.baseCount}</div>
+              <p className="text-xs text-muted-foreground mt-1">Max Capacity: {liveData.maxCount}</p>
+              <Progress value={(liveData.baseCount / liveData.maxCount) * 100} className="h-2 mt-4" />
             </CardContent>
           </Card>
 
-          {/* AQI */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Air Quality Index</CardTitle>
               <Wind className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className={`text-3xl font-bold ${aqiInfo.color}`}>
-                {liveData.baseAqi}
-              </div>
-              <p className="text-xs font-semibold mt-1">
-                Status: {aqiInfo.label}
-              </p>
+              <div className={`text-3xl font-bold ${aqiInfo.color}`}>{liveData.baseAqi}</div>
+              <p className="text-xs font-semibold mt-1">Status: {aqiInfo.label}</p>
               <div className="mt-4 flex gap-1 h-2 overflow-hidden rounded-full bg-muted">
                 <div className="h-full bg-green-500" style={{ width: '15%' }} />
                 <div className="h-full bg-yellow-500" style={{ width: '15%' }} />
@@ -253,7 +262,6 @@ export function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Timer */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Signal Timer</CardTitle>
@@ -263,9 +271,7 @@ export function Dashboard() {
               <div className="text-3xl font-bold">
                 {liveData.baseTimer}<span className="text-sm ml-1 text-muted-foreground">seconds</span>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Optimized by AI engine
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">Optimized by AI engine</p>
               <div className="mt-4 flex items-center justify-center py-2 bg-muted/50 rounded-lg">
                 <div className="flex gap-2">
                   <div className={`w-4 h-4 rounded-full ${liveData.baseTimer > 60 ? 'bg-red-500 animate-pulse' : 'bg-red-900'}`} />
@@ -276,60 +282,109 @@ export function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Road Node Status */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Ingress</CardTitle>
-              <Route className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Network Latency</CardTitle>
+              <Cpu className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{liveData.nodes}</div>
-              <p className="text-xs text-muted-foreground mt-1">Operational Lane Groups</p>
-              <div className="flex flex-wrap gap-1 mt-4">
-                {Array.from({ length: liveData.nodes }).map((_, i) => (
-                  <div key={i} className="w-4 h-6 bg-primary/20 border border-primary/30 rounded flex items-center justify-center text-[8px] font-bold text-primary">
-                    N{i+1}
-                  </div>
-                ))}
+              <div className="text-3xl font-bold">{simulationHistory.length > 0 ? simulationHistory[simulationHistory.length-1].speed : '--'}<span className="text-sm ml-1 text-muted-foreground">km/h</span></div>
+              <p className="text-xs text-muted-foreground mt-1">SUMO Flow Simulation</p>
+              <div className="flex items-center gap-2 mt-4">
+                <Activity className="h-3 w-3 text-primary animate-bounce" />
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Engine Processing...</span>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* AI Insight Section */}
-        <div className="grid lg:grid-cols-3 gap-8">
+        {/* SUMO Simulation & AI Insight Section */}
+        <div className="grid lg:grid-cols-3 gap-8 mb-8">
           <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Zap className="h-5 w-5 text-primary" />
-                Adaptive AI Intelligence Rationale
-              </CardTitle>
-              <CardDescription>
-                Live decision-making breakdown from the traffic optimization core
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <LineChart className="h-5 w-5 text-primary" />
+                  SUMO Network Performance
+                </CardTitle>
+                <CardDescription>Real-time vehicle throughput and average velocity</CardDescription>
+              </div>
+              <Badge variant="outline" className="font-mono">SIM_ID: {selectedJunction.slice(0, 3).toUpperCase()}_001</Badge>
             </CardHeader>
             <CardContent>
-              <div className="p-4 bg-muted/30 border rounded-xl min-h-[120px]">
-                {aiRationale ? (
-                  <p className="text-sm leading-relaxed text-foreground">
-                    {aiRationale}
-                  </p>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-2">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                    <span className="text-xs uppercase font-bold tracking-widest">Awaiting Simulation Feed...</span>
-                  </div>
-                )}
-              </div>
+              <ChartContainer config={chartConfig} className="h-[250px] w-full">
+                <AreaChart data={simulationHistory}>
+                  <defs>
+                    <linearGradient id="colorSpeed" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--color-speed)" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="var(--color-speed)" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorThroughput" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--color-throughput)" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="var(--color-throughput)" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis 
+                    dataKey="timestamp" 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tick={{fontSize: 10}} 
+                    minTickGap={20}
+                  />
+                  <YAxis hide />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Area
+                    type="monotone"
+                    dataKey="speed"
+                    stroke="var(--color-speed)"
+                    fillOpacity={1}
+                    fill="url(#colorSpeed)"
+                    isAnimationActive={false}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="throughput"
+                    stroke="var(--color-throughput)"
+                    fillOpacity={1}
+                    fill="url(#colorThroughput)"
+                    isAnimationActive={false}
+                  />
+                </AreaChart>
+              </ChartContainer>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Zap className="h-5 w-5 text-primary" />
+                AI Rationale
+              </CardTitle>
+              <CardDescription>Optimization Intelligence</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="p-4 bg-muted/30 border rounded-xl min-h-[180px]">
+                {aiRationale ? (
+                  <p className="text-sm leading-relaxed text-foreground">{aiRationale}</p>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-2 pt-10">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                    <span className="text-xs uppercase font-bold tracking-widest text-center">Awaiting System Sync...</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid lg:grid-cols-1 gap-8">
+           <Card>
+            <CardHeader>
               <CardTitle className="text-lg">District Overview</CardTitle>
               <CardDescription>Junction health in {selectedCity}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
               {junctions.map(j => {
                 const data = citiesData[selectedCity][j];
                 const info = getAQIStatus(data.baseAqi);

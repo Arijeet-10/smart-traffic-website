@@ -20,3 +20,22 @@ export const getCongestionColor = (count: number, max: number) => {
   if (ratio < 0.7) return 'text-yellow-500';
   return 'text-red-500';
 };
+
+/**
+ * Simulates SUMO performance metrics based on traffic density and signal efficiency.
+ */
+export const calculateSumoMetrics = (count: number, timer: number, maxCount: number) => {
+  const density = count / maxCount;
+  // Speed decreases as density increases, but signal efficiency (timer) helps
+  const baseSpeed = 50; // km/h
+  const speed = Math.max(5, baseSpeed * (1 - density * 0.8) + (timer / 150) * 10);
+  
+  // Throughput (vehicles per minute)
+  const throughput = Math.floor((speed / 10) * (count / 20));
+  
+  return {
+    speed: Math.round(speed),
+    throughput: Math.round(throughput),
+    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  };
+};
