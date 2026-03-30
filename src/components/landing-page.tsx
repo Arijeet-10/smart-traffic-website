@@ -1,8 +1,16 @@
+"use client";
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Shield, Activity, Zap, BarChart3, Cloud, MapPin, Layers, FastForward, ArrowRight } from 'lucide-react';
+import { Dashboard } from '@/components/dashboard';
 
 export function LandingPage() {
+  const scrollToDashboard = () => {
+    const element = document.getElementById('dashboard');
+    element?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       {/* Header */}
@@ -19,9 +27,9 @@ export function LandingPage() {
           <nav className="hidden md:flex items-center gap-8">
             <Link href="#about" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">About</Link>
             <Link href="#features" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Features</Link>
-            <Link href="#how-it-works" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Workflow</Link>
-            <Button asChild variant="default" size="lg" className="rounded-full px-8 shadow-lg shadow-primary/20">
-              <Link href="/dashboard">Launch Dashboard</Link>
+            <Link href="#dashboard" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Terminal</Link>
+            <Button onClick={scrollToDashboard} variant="default" size="lg" className="rounded-full px-8 shadow-lg shadow-primary/20">
+              Launch Dashboard
             </Button>
           </nav>
         </div>
@@ -29,7 +37,7 @@ export function LandingPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative pt-32 pb-24 px-4 overflow-hidden">
+        <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(59,130,246,0.1),transparent)] pointer-events-none" />
           <div className="container mx-auto text-center max-w-5xl relative z-10">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -47,16 +55,21 @@ export function LandingPage() {
               An AI-powered infrastructure for West Bengal, dynamically optimizing traffic signals across 20+ districts using real-time IoT, YOLO vision, and environmental data.
             </p>
             <div className="flex flex-wrap justify-center gap-6">
-              <Button asChild size="xl" className="h-14 px-10 rounded-full text-lg font-bold shadow-xl shadow-primary/30 hover:scale-105 transition-transform">
-                <Link href="/dashboard" className="flex items-center gap-2">
+              <Button onClick={scrollToDashboard} size="lg" className="h-14 px-10 rounded-full text-lg font-bold shadow-xl shadow-primary/30 hover:scale-105 transition-transform">
+                <span className="flex items-center gap-2">
                   Enter Command Center <ArrowRight className="h-5 w-5" />
-                </Link>
+                </span>
               </Button>
-              <Button variant="outline" size="xl" className="h-14 px-10 rounded-full text-lg font-bold border-2" asChild>
+              <Button variant="outline" size="lg" className="h-14 px-10 rounded-full text-lg font-bold border-2" asChild>
                 <Link href="#how-it-works">Watch the Workflow</Link>
               </Button>
             </div>
           </div>
+        </section>
+
+        {/* Dashboard Section */}
+        <section id="dashboard" className="bg-slate-50 dark:bg-slate-950">
+          <Dashboard />
         </section>
 
         {/* About Section */}
