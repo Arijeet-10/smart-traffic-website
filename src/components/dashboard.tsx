@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Wind, Timer, MapPin, Route, Activity, Loader2, Moon, Sun, AlertTriangle } from 'lucide-react';
+import { Users, Wind, Timer, MapPin, Route, Activity, Loader2, Moon, Sun, AlertTriangle, Zap } from 'lucide-react';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 
