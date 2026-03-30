@@ -1,18 +1,45 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Shield, Activity, Zap, BarChart3, Cloud, MapPin, Layers, FastForward, ArrowRight } from 'lucide-react';
+import { Shield, Activity, Zap, BarChart3, Cloud, MapPin, Layers, FastForward, ArrowRight, Sun, Moon } from 'lucide-react';
 import { Dashboard } from '@/components/dashboard';
 
 export function LandingPage() {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [mounted, setMounted] = useState(false);
+
+  // Initialize theme on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme('dark');
+    }
+    setMounted(true);
+  }, []);
+
+  // Update document class when theme changes
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+
   const scrollToDashboard = () => {
     const element = document.getElementById('dashboard');
     element?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  if (!mounted) return null;
+
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
       {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
@@ -24,10 +51,18 @@ export function LandingPage() {
               BengalFlow AI
             </span>
           </div>
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
             <Link href="#about" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">About</Link>
             <Link href="#features" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Features</Link>
             <Link href="#dashboard" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Terminal</Link>
+            
+            <div className="h-6 w-px bg-border mx-2" />
+            
+            <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
+              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+
             <Button onClick={scrollToDashboard} variant="default" size="lg" className="rounded-full px-8 shadow-lg shadow-primary/20">
               Launch Dashboard
             </Button>
@@ -38,7 +73,7 @@ export function LandingPage() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(59,130,246,0.1),transparent)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(59,130,246,0.1),transparent)] dark:bg-[radial-gradient(circle_at_50%_120%,rgba(59,130,246,0.05),transparent)] pointer-events-none" />
           <div className="container mx-auto text-center max-w-5xl relative z-10">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
               <span className="relative flex h-2 w-2">
@@ -68,8 +103,8 @@ export function LandingPage() {
         </section>
 
         {/* Dashboard Section */}
-        <section id="dashboard" className="bg-slate-50 dark:bg-slate-950">
-          <Dashboard />
+        <section id="dashboard" className="bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+          <Dashboard theme={theme} toggleTheme={toggleTheme} />
         </section>
 
         {/* About Section */}
@@ -87,7 +122,7 @@ export function LandingPage() {
                   { label: 'YOLO v8', sub: 'Detection' },
                   { label: '99.9%', sub: 'Uptime' },
                 ].map((stat, i) => (
-                  <div key={i} className="p-6 bg-card border rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+                  <div key={i} className="p-6 bg-card border rounded-3xl shadow-sm hover:shadow-md transition-all">
                     <div className="text-3xl font-black text-primary mb-1">{stat.label}</div>
                     <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{stat.sub}</div>
                   </div>

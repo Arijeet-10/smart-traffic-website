@@ -27,13 +27,17 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function Dashboard() {
+interface DashboardProps {
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+}
+
+export function Dashboard({ theme, toggleTheme }: DashboardProps) {
   const [selectedCity, setSelectedCity] = useState("Kolkata");
   const [selectedJunction, setSelectedJunction] = useState("Park Circus 7-Point");
   const [liveData, setLiveData] = useState<JunctionData | null>(null);
   const [isAIUpdating, setIsAIUpdating] = useState(false);
   const [aiRationale, setAiRationale] = useState("");
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [simulationHistory, setSimulationHistory] = useState<any[]>([]);
   const { toast } = useToast();
 
@@ -121,10 +125,10 @@ export function Dashboard() {
   const congestionColor = getCongestionColor(liveData.baseCount, liveData.maxCount);
 
   return (
-    <div className={`transition-all duration-500 py-16 ${isDarkMode ? 'dark bg-slate-950' : 'bg-slate-50'}`}>
+    <div className={`transition-all duration-500 py-16 px-4 bg-slate-50 dark:bg-slate-950`}>
       <Toaster />
       
-      <div className="container mx-auto px-4 space-y-8">
+      <div className="container mx-auto space-y-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b pb-8">
           <div>
             <h2 className="text-3xl font-black tracking-tight flex items-center gap-3">
@@ -133,8 +137,8 @@ export function Dashboard() {
             <p className="text-sm text-muted-foreground font-medium mt-1">Real-time optimization engine active for {selectedCity}</p>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" className="rounded-xl" onClick={() => setIsDarkMode(!isDarkMode)}>
-              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            <Button variant="outline" size="icon" className="rounded-xl" onClick={toggleTheme}>
+              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
             <div className="flex items-center gap-2 bg-green-500/10 text-green-500 px-4 py-2 rounded-full border border-green-500/20 text-[10px] font-black uppercase tracking-widest">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -147,8 +151,8 @@ export function Dashboard() {
         <div className="grid lg:grid-cols-12 gap-8">
           {/* Selection Panel */}
           <div className="lg:col-span-3 space-y-6">
-            <Card className="border-none shadow-2xl shadow-primary/5 overflow-hidden rounded-3xl">
-              <CardHeader className="bg-primary/5 border-b pb-4">
+            <Card className="border-none shadow-2xl shadow-primary/5 dark:shadow-black/20 overflow-hidden rounded-3xl bg-card">
+              <CardHeader className="bg-primary/5 dark:bg-primary/10 border-b pb-4">
                 <CardTitle className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
                   Target Location
@@ -158,7 +162,7 @@ export function Dashboard() {
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">District</label>
                   <Select value={selectedCity} onValueChange={handleCityChange}>
-                    <SelectTrigger className="h-12 rounded-xl border-2 focus:ring-primary shadow-sm font-bold">
+                    <SelectTrigger className="h-12 rounded-xl border-2 focus:ring-primary shadow-sm font-bold bg-background">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -171,7 +175,7 @@ export function Dashboard() {
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Intersection</label>
                   <Select value={selectedJunction} onValueChange={setSelectedJunction}>
-                    <SelectTrigger className="h-12 rounded-xl border-2 focus:ring-primary shadow-sm font-bold">
+                    <SelectTrigger className="h-12 rounded-xl border-2 focus:ring-primary shadow-sm font-bold bg-background">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -244,7 +248,7 @@ export function Dashboard() {
             { title: 'AI Optimized Cycle', icon: <Timer className="h-5 w-5" />, value: `${liveData.baseTimer}s`, sub: 'Current Interval', color: 'text-foreground', progress: (liveData.baseTimer/liveData.maxTimer)*100 },
             { title: 'Flow Velocity', icon: <Cpu className="h-5 w-5" />, value: simulationHistory.length > 0 ? `${simulationHistory[simulationHistory.length-1].speed} km/h` : '--', sub: 'SUMO Engine Data', color: 'text-primary', progress: 65 },
           ].map((metric, i) => (
-            <Card key={i} className="border-none shadow-xl shadow-black/5 hover:scale-[1.02] transition-transform duration-300 rounded-3xl overflow-hidden">
+            <Card key={i} className="border-none shadow-xl shadow-black/5 hover:scale-[1.02] transition-transform duration-300 rounded-3xl overflow-hidden bg-card">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{metric.title}</CardTitle>
                 <div className="p-2 bg-muted rounded-xl">{metric.icon}</div>
@@ -260,7 +264,7 @@ export function Dashboard() {
 
         {/* Performance & Logic Section */}
         <div className="grid lg:grid-cols-12 gap-8">
-          <Card className="lg:col-span-8 border-none shadow-2xl shadow-black/5 rounded-3xl overflow-hidden">
+          <Card className="lg:col-span-8 border-none shadow-2xl shadow-black/5 rounded-3xl overflow-hidden bg-card">
             <CardHeader className="flex flex-row items-center justify-between bg-muted/30 pb-6">
               <div>
                 <CardTitle className="text-lg font-black flex items-center gap-2">
@@ -323,7 +327,7 @@ export function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="lg:col-span-4 border-none shadow-2xl shadow-primary/5 rounded-3xl overflow-hidden flex flex-col">
+          <Card className="lg:col-span-4 border-none shadow-2xl shadow-primary/5 rounded-3xl overflow-hidden flex flex-col bg-card">
             <CardHeader className="bg-primary pb-6 text-primary-foreground">
               <CardTitle className="text-lg font-black flex items-center gap-2">
                 <Zap className="h-5 w-5" />
@@ -333,7 +337,7 @@ export function Dashboard() {
             </CardHeader>
             <CardContent className="flex-1 p-8">
               <div className="relative h-full flex flex-col">
-                 <div className="p-6 bg-muted border rounded-[2rem] flex-1 relative overflow-hidden group">
+                 <div className="p-6 bg-muted/50 border rounded-[2rem] flex-1 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity text-primary">
                     <Activity className="h-20 w-20" />
                   </div>
@@ -359,7 +363,7 @@ export function Dashboard() {
         </div>
 
         {/* Regional Hub Health Grid */}
-        <Card className="border-none shadow-2xl shadow-black/5 rounded-3xl overflow-hidden">
+        <Card className="border-none shadow-2xl shadow-black/5 rounded-3xl overflow-hidden bg-card">
           <CardHeader className="bg-muted/30 pb-6">
             <CardTitle className="text-lg font-black uppercase tracking-tight">Regional Hub Pulse</CardTitle>
             <CardDescription className="font-medium">Junction networks in {selectedCity}</CardDescription>
@@ -372,11 +376,11 @@ export function Dashboard() {
               return (
                 <div 
                   key={j} 
-                  className={`group relative flex items-center justify-between p-5 border-2 rounded-[2rem] transition-all duration-300 cursor-pointer ${isActive ? 'bg-primary border-primary shadow-xl shadow-primary/20 scale-105' : 'hover:border-primary/30 hover:bg-card'}`}
+                  className={`group relative flex items-center justify-between p-5 border-2 rounded-[2rem] transition-all duration-300 cursor-pointer ${isActive ? 'bg-primary border-primary shadow-xl shadow-primary/20 scale-105' : 'hover:border-primary/30 hover:bg-card border-border bg-background'}`}
                   onClick={() => setSelectedJunction(j)}
                 >
                   <div className="flex flex-col">
-                    <span className={`text-sm font-black tracking-tight ${isActive ? 'text-primary-foreground' : ''}`}>{j}</span>
+                    <span className={`text-sm font-black tracking-tight ${isActive ? 'text-primary-foreground' : 'text-foreground'}`}>{j}</span>
                     <span className={`text-[9px] font-black uppercase tracking-widest ${isActive ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>{data.road}</span>
                   </div>
                   <div className="flex items-center gap-4">
@@ -388,6 +392,14 @@ export function Dashboard() {
             })}
           </CardContent>
         </Card>
+
+        <footer className="pt-8 border-t flex flex-col md:flex-row justify-between items-center text-[10px] font-black tracking-[0.2em] text-muted-foreground gap-4">
+          <div>STATUS: SYNCHRONIZED • PULSE: {new Date().toLocaleTimeString()}</div>
+          <div className="flex gap-8">
+            <Link href="/" className="hover:text-primary transition-colors">BACK TO TERMINAL</Link>
+            <Link href="#" className="hover:text-primary transition-colors">SUPPORT</Link>
+          </div>
+        </footer>
       </div>
     </div>
   );
