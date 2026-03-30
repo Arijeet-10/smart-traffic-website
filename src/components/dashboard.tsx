@@ -9,10 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Wind, Timer, MapPin, Route, Activity, Loader2, Moon, Sun, AlertTriangle, Zap, LineChart, Cpu } from 'lucide-react';
+import { Users, Wind, Timer, MapPin, Activity, Loader2, Moon, Sun, Zap, LineChart, Cpu } from 'lucide-react';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 
 const chartConfig = {
@@ -95,8 +95,7 @@ export function Dashboard() {
 
       setLiveData(prev => prev ? ({ ...prev, baseTimer: result.recommendedTimer }) : null);
       setAiRationale(result.rationale);
-    } catch (error) {
-      console.error("AI Optimization failed", error);
+    } catch (error: any) {
       toast({
         title: "AI Optimization Error",
         description: "Failed to connect to the traffic optimization engine.",
@@ -189,7 +188,7 @@ export function Dashboard() {
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Activity className="h-5 w-5" />
                   Live Status
-                </Activity>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
