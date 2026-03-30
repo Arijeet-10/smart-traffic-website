@@ -261,25 +261,6 @@ export function Dashboard() {
                   <source src={liveData.videoUrl} type="video/mp4" />
                 </video>
                 <div className="absolute inset-0 pointer-events-none border-[1.5rem] border-transparent shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]" />
-                {/* Simulated Overlay Graphics */}
-                <div className="absolute inset-0 p-8 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="bg-black/60 backdrop-blur-lg p-6 rounded-3xl border border-white/10 max-w-md">
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="space-y-1">
-                        <div className="text-[8px] font-black text-white/50 uppercase">Cars</div>
-                        <div className="text-lg font-black text-primary">{(liveData.baseCount * 0.7).toFixed(0)}</div>
-                      </div>
-                      <div className="space-y-1">
-                        <div className="text-[8px] font-black text-white/50 uppercase">Buses</div>
-                        <div className="text-lg font-black text-accent">{(liveData.baseCount * 0.2).toFixed(0)}</div>
-                      </div>
-                      <div className="space-y-1">
-                        <div className="text-[8px] font-black text-white/50 uppercase">Other</div>
-                        <div className="text-lg font-black text-white">{(liveData.baseCount * 0.1).toFixed(0)}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </div>
