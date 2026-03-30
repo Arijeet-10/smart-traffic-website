@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import Link from 'next/link';
 import { citiesData, JunctionData, RoadCondition } from '@/app/lib/cities-data';
 import { getAQIStatus, fluctuateValue, getCongestionColor, calculateSumoMetrics } from '@/app/lib/simulation';
 import { suggestTrafficSignalOptimization } from '@/ai/flows/suggest-traffic-signal-optimization-flow';
