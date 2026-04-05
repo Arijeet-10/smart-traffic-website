@@ -1,8 +1,8 @@
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'BengalFlow AI - Smart Traffic Optimization',
+  title: 'SmartOPT - Smart Traffic Optimization',
   description: 'AI-powered traffic control system for West Bengal, India.',
 };
 

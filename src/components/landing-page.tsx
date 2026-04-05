@@ -47,7 +47,7 @@ export function LandingPage() {
             <div className="bg-primary/20 text-primary p-1.5 rounded-full">
               <Zap className="h-5 w-5" />
             </div>
-            <span className="text-xl font-bold tracking-tight">BengalFlow AI</span>
+            <span className="text-xl font-bold tracking-tight">SmartOPT</span>
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <Link href="#about" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">About</Link>
@@ -55,9 +55,9 @@ export function LandingPage() {
             <Link href="#benefits" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Benefits</Link>
             <Link href="#roadmap" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Future</Link>
             <Link href="#dashboard" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Terminal</Link>
-            
+
             <div className="h-5 w-px bg-border mx-1" />
-            
+
             <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full hover:bg-primary/10">
               {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5 text-slate-700" />}
               <span className="sr-only">Toggle theme</span>
@@ -112,7 +112,7 @@ export function LandingPage() {
             <div className="space-y-8">
               <h2 className="text-4xl font-bold tracking-tight">Intelligence at the core.</h2>
               <p className="text-xl text-muted-foreground leading-relaxed">
-                BengalFlow AI integrates real-time vehicle detection with environmental metrics to create a truly adaptive urban mobility ecosystem. Minimal delays, cleaner air.
+                SmartOPT integrates real-time vehicle detection with environmental metrics to create a truly adaptive urban mobility ecosystem. Minimal delays, cleaner air.
               </p>
               <div className="grid grid-cols-2 gap-6 pt-4">
                 {[
@@ -256,7 +256,7 @@ export function LandingPage() {
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-6">
             <Zap className="h-5 w-5 text-primary" />
-            <span className="text-xl font-black">BengalFlow</span>
+            <span className="text-xl font-black">SmartOPT</span>
           </div>
           <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-8">
             Adaptive infrastructure modeling.

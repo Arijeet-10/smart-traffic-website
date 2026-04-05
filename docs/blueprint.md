@@ -1,4 +1,4 @@
-# **App Name**: BengalFlow AI
+# **App Name**: SmartOPT
 
 ## Core Features:
 

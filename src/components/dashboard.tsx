@@ -68,7 +68,7 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
           baseCount: fluctuateValue(prev.baseCount, 12, 10),
           baseAqi: fluctuateValue(prev.baseAqi, 8, 20),
         };
-        
+
         // Update simulation history
         const metrics = calculateSumoMetrics(newData.baseCount, newData.baseTimer, newData.maxCount);
         setSimulationHistory(h => {
@@ -89,7 +89,7 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
     setIsAIUpdating(true);
     try {
       const junctionConfig = citiesData[selectedCity][selectedJunction];
-      
+
       const result = await suggestTrafficSignalOptimization({
         vehicleCount: liveData.baseCount,
         aqi: liveData.baseAqi,
@@ -129,11 +129,11 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
       <div className="absolute inset-0 bg-grid-slate-900/[0.04] dark:bg-grid-slate-400/[0.02] bg-[bottom_1px_center] pointer-events-none" />
       <div className="container mx-auto space-y-8 relative z-10">
         <Toaster />
-        
+
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border/50 pb-8">
           <div>
             <h2 className="text-3xl font-black tracking-tight flex items-center gap-3">
-              BengalFlow <Badge variant="secondary" className="font-black px-3 py-1 text-sm">COMMAND CENTER</Badge>
+              SmartOPT <Badge variant="secondary" className="font-black px-3 py-1 text-sm">COMMAND CENTER</Badge>
             </h2>
             <p className="text-sm text-muted-foreground font-medium mt-1">Real-time optimization engine active for {selectedCity}</p>
           </div>
@@ -219,7 +219,7 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
             <div className="hud-corner hud-corner-tr"></div>
             <div className="hud-corner hud-corner-bl"></div>
             <div className="hud-corner hud-corner-br"></div>
-            
+
             <div className="absolute top-6 left-6 z-20 flex items-center gap-3 bg-black/60 backdrop-blur-xl px-4 py-2 rounded-full border border-white/10 shadow-2xl">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
@@ -231,11 +231,11 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
               <span className="text-[10px] font-black text-white uppercase tracking-widest">{selectedJunction} CCTV-ID:722</span>
             </div>
             <CardContent className="p-0 h-[500px] bg-slate-900 flex items-center justify-center relative overflow-hidden">
-              <video 
+              <video
                 key={liveData.videoUrl}
-                autoPlay 
-                loop 
-                muted 
+                autoPlay
+                loop
+                muted
                 playsInline
                 className="w-full h-full object-cover"
               >
@@ -249,9 +249,9 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
         {/* Metrics Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
           {[
-            { title: 'Vehicle Count', icon: <Car className="h-5 w-5" />, value: liveData.baseCount, sub: `Max: ${liveData.maxCount} vehicles`, color: congestionColor, progress: (liveData.baseCount/liveData.maxCount)*100 },
-            { title: 'Air Quality Index', icon: <Cloud className="h-5 w-5" />, value: liveData.baseAqi, sub: aqiInfo.label, color: aqiInfo.color, progress: (liveData.baseAqi/300)*100 },
-            { title: 'Signal Timer', icon: <Timer className="h-5 w-5" />, value: `${liveData.baseTimer}s`, sub: `Max: ${liveData.maxTimer}s adaptive`, color: 'text-foreground', progress: (liveData.baseTimer/liveData.maxTimer)*100 },
+            { title: 'Vehicle Count', icon: <Car className="h-5 w-5" />, value: liveData.baseCount, sub: `Max: ${liveData.maxCount} vehicles`, color: congestionColor, progress: (liveData.baseCount / liveData.maxCount) * 100 },
+            { title: 'Air Quality Index', icon: <Cloud className="h-5 w-5" />, value: liveData.baseAqi, sub: aqiInfo.label, color: aqiInfo.color, progress: (liveData.baseAqi / 300) * 100 },
+            { title: 'Signal Timer', icon: <Timer className="h-5 w-5" />, value: `${liveData.baseTimer}s`, sub: `Max: ${liveData.maxTimer}s adaptive`, color: 'text-foreground', progress: (liveData.baseTimer / liveData.maxTimer) * 100 },
             { title: 'Road Condition', icon: <Route className="h-5 w-5" />, value: liveData.road, sub: 'Traffic Status', color: 'text-orange-500', progress: 100 },
             { title: 'Active Nodes', icon: <Radio className="h-5 w-5" />, value: liveData.nodes, sub: 'IoT nodes online', color: 'text-primary', progress: 100 },
           ].map((metric, i) => (
@@ -287,11 +287,11 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
             <CardContent className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Video Section */}
               <div className="lg:col-span-2 rounded-[1.5rem] overflow-hidden border-2 border-border/50 bg-black relative h-[300px] lg:h-[400px]">
-                <video 
+                <video
                   key={liveData.mapUrl + "_sumo"}
-                  autoPlay 
-                  loop 
-                  muted 
+                  autoPlay
+                  loop
+                  muted
                   playsInline
                   className="w-full h-full object-cover"
                 >
@@ -309,7 +309,7 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
                 <div className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 transition-colors flex-1 flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-2">
                     <Car className="h-5 w-5 text-green-400" />
-                    <h4 className="text-[11px] font-black uppercase tracking-widest leading-tight">5. Vehicle Classification <br/><span className="text-[9px] text-muted-foreground opacity-70">(EV, Fossil Fuel)</span></h4>
+                    <h4 className="text-[11px] font-black uppercase tracking-widest leading-tight">5. Vehicle Classification <br /><span className="text-[9px] text-muted-foreground opacity-70">(EV, Fossil Fuel)</span></h4>
                   </div>
                   <p className="text-xs text-muted-foreground font-medium mb-3">Real-time detection and count of EVs vs Fossil Fuel vehicles.</p>
                   <div className="flex justify-between items-center text-xs font-black">
@@ -322,7 +322,7 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
                 <div className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 transition-colors flex-1 flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-2">
                     <Timer className="h-5 w-5 text-yellow-400" />
-                    <h4 className="text-[11px] font-black uppercase tracking-widest leading-tight">6. Red Light Stop <br/><span className="text-[9px] text-muted-foreground opacity-70">(Dynamic Timer)</span></h4>
+                    <h4 className="text-[11px] font-black uppercase tracking-widest leading-tight">6. Red Light Stop <br /><span className="text-[9px] text-muted-foreground opacity-70">(Dynamic Timer)</span></h4>
                   </div>
                   <p className="text-xs text-muted-foreground font-medium mb-3">Time increases/decreases dynamically as per traffic requirement.</p>
                   <div className="flex justify-between items-center text-xs font-black">
@@ -335,7 +335,7 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
                 <div className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-red-500/50 transition-colors flex-1 flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-2">
                     <AlertCircle className="h-5 w-5 text-red-500" />
-                    <h4 className="text-[11px] font-black uppercase tracking-widest leading-tight">7. Emergency Incident <br/><span className="text-[9px] text-muted-foreground opacity-70">(Ambulance)</span></h4>
+                    <h4 className="text-[11px] font-black uppercase tracking-widest leading-tight">7. Emergency Incident <br /><span className="text-[9px] text-muted-foreground opacity-70">(Ambulance)</span></h4>
                   </div>
                   <p className="text-xs text-muted-foreground font-medium mb-3">Ambulance tracking requesting immediate signal priority routing.</p>
                   <div className="flex justify-between items-center text-xs font-black">
@@ -372,12 +372,12 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
                 <AreaChart data={simulationHistory}>
                   <defs>
                     <linearGradient id="colorSpeed" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="colorThroughput" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid vertical={false} strokeDasharray="5 5" className="stroke-muted" />
@@ -430,8 +430,8 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
               const info = getAQIStatus(data.baseAqi);
               const isActive = j === selectedJunction;
               return (
-                <div 
-                  key={j} 
+                <div
+                  key={j}
                   className={`group relative flex items-center justify-between p-5 border-2 rounded-[2rem] transition-all duration-300 cursor-pointer ${isActive ? 'bg-primary/20 border-primary glow-primary shadow-xl scale-105' : 'hover:border-primary/30 hover:bg-white/5 border-border bg-transparent'}`}
                   onClick={() => setSelectedJunction(j)}
                 >
@@ -462,7 +462,7 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
             {junctions.map(j => {
               const data = j === selectedJunction && liveData ? liveData : citiesData[selectedCity][j];
               const info = getAQIStatus(data.baseAqi);
-              
+
               const pm25 = Math.round(data.baseAqi * 0.45);
               const pm10 = Math.round(data.baseAqi * 0.85);
               const no2 = Math.round(data.baseAqi * 0.35);

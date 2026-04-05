@@ -1,4 +1,4 @@
-BENGALFLOW AI VIDEO ASSETS
+SmartOPT VIDEO ASSETS
 ==========================
 
 Place your junction-specific YOLO detection videos (MP4 format) in this folder.
