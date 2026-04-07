@@ -129,17 +129,37 @@ export function LandingPage() {
               </div>
             </div>
             <div className="glass-panel rounded-[3rem] p-8 aspect-square flex flex-col justify-center space-y-6">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-20 w-full bg-background/50 rounded-2xl flex items-center px-6 gap-4 border border-border/50">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Activity className="h-5 w-5 text-primary opacity-70" />
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <div className={`h-3 bg-primary/20 rounded-full ${i === 1 ? 'w-3/4' : i === 2 ? 'w-1/2' : 'w-5/6'}`} />
-                    <div className="h-2 w-1/3 bg-muted-foreground/30 rounded-full" />
-                  </div>
-                </div>
-              ))}
+              {[
+  {
+    title: "Real-Time Traffic Monitoring",
+    desc: "AI-powered vehicle detection with live congestion analysis",
+  },
+  {
+    title: "Adaptive Signal Control",
+    desc: "Dynamic traffic light optimization based on flow patterns",
+  },
+  {
+    title: "Environmental Intelligence",
+    desc: "Air quality tracking to reduce emissions and pollution",
+  },
+].map((item, i) => (
+  <div
+    key={i}
+    className="h-20 w-full bg-background/50 rounded-2xl flex items-center px-6 gap-4 border border-border/50"
+  >
+    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+      <Activity className="h-5 w-5 text-primary opacity-70" />
+    </div>
+    <div className="flex-1 space-y-1">
+      <div className="text-sm font-semibold text-foreground">
+        {item.title}
+      </div>
+      <div className="text-xs text-muted-foreground">
+        {item.desc}
+      </div>
+    </div>
+  </div>
+))}
             </div>
           </div>
         </section>
