@@ -101,11 +101,11 @@ export function Dashboard({ theme, toggleTheme }: DashboardProps) {
 
       setLiveData(prev => prev ? ({ ...prev, baseTimer: result.recommendedTimer }) : null);
     } catch (error: any) {
-      toast({
-        title: "AI Optimization Error",
-        description: "Failed to connect to the traffic optimization engine. Retrying automatically.",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "AI Optimization Error",
+      //   description: "Failed to connect to the traffic optimization engine. Retrying automatically.",
+      //   variant: "destructive",
+      // });
     } finally {
       setIsAIUpdating(false);
     }

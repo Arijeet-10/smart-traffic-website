@@ -23,10 +23,10 @@ export const citiesData: StateData = {
   "Kolkata": {
     "Park Circus 7-Point": { baseCount: 160, maxCount: 220, baseTimer: 75, maxTimer: 120, baseAqi: 150, road: "Congested", nodes: 8, videoUrl: "/videos/video.mp4", mapUrl: "/maps/video1.mp4" },
     "Shyam Bazar Five Point": { baseCount: 140, maxCount: 200, baseTimer: 60, maxTimer: 110, baseAqi: 140, road: "Busy", nodes: 5, videoUrl: "/videos/kolkata_shyam_bazar.mp4", mapUrl: "/maps/video1.mp4" },
-    "Ultadanga Crossing": { baseCount: 180, maxCount: 250, baseTimer: 80, maxTimer: 130, baseAqi: 160, road: "Busy", nodes: 6, videoUrl: "/videos/ultadanga.mp4", mapUrl: "/maps/video1.mp4" },
+    "Ultadanga Crossing": { baseCount: 180, maxCount: 250, baseTimer: 80, maxTimer: 130, baseAqi: 160, road: "Busy", nodes: 6, videoUrl: "/videos/ultadanga.mp4", mapUrl: "/maps/video2.mp4" },
     "Gariahat Crossing": { baseCount: 150, maxCount: 210, baseTimer: 70, maxTimer: 115, baseAqi: 135, road: "Market Traffic", nodes: 4, videoUrl: "/videos/kolkata_gariahat.mp4", mapUrl: "/maps/video1.mp4" },
     "Esplanade Junction": { baseCount: 200, maxCount: 280, baseTimer: 90, maxTimer: 150, baseAqi: 180, road: "Congested", nodes: 10, videoUrl: "/videos/kolkata_esplanade.mp4", mapUrl: "/maps/video1.mp4" },
-    "Airport Gate No.1 ": { baseCount: 130, maxCount: 190, baseTimer: 55, maxTimer: 100, baseAqi: 125, road: "Busy", nodes: 4, videoUrl: "/videos/airport.mp4", mapUrl: "/maps/video1.mp4" },
+    "Airport Gate No.1 ": { baseCount: 130, maxCount: 190, baseTimer: 55, maxTimer: 100, baseAqi: 125, road: "Busy", nodes: 4, videoUrl: "/videos/airport.mp4", mapUrl: "/maps/video3.mp4" },
   },
   "Howrah": {
     "Station More": { baseCount: 210, maxCount: 300, baseTimer: 85, maxTimer: 140, baseAqi: 170, road: "Congested", nodes: 7, videoUrl: "/videos/howrah_station.mp4", mapUrl: "/maps/howrah_station.mp4" },
